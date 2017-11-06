@@ -6,7 +6,11 @@
     "target": "es2017",
     "lib": [
       "es2017"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "auto-push": ["node_modules/auto-push/build/src/index"]
+    }
   },
   "include": [
     "ts/**/*.ts"
