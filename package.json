@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/cookie": "^0.3.1",
-    "@types/mime": "^2.0.0",
+    "@types/send": "^0.14.3",
     "gts": "latest",
     "typescript": "^2.6.1"
   },
@@ -30,6 +30,6 @@
     "cookie": "^0.3.1",
     "fastify": "^0.32.0",
     "fastify-plugin": "^0.1.1",
-    "mime": "^2.0.3"
+    "send": "^0.16.1"
   }
 }
