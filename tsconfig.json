@@ -9,7 +9,7 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "auto-push": ["node_modules/auto-push/build/src/index"]
+      "h2-auto-push": ["../auto-push/build/src/index"]
     }
   },
   "include": [

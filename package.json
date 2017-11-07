@@ -15,7 +15,8 @@
   },
   "keywords": [
     "http2",
-    "auto-push"
+    "auto-push",
+    "server-push"
   ],
   "author": "Google LLC",
   "license": "Apache-2.0",
@@ -26,10 +27,10 @@
     "typescript": "^2.6.1"
   },
   "dependencies": {
-    "auto-push": "file:../auto-push",
     "cookie": "^0.3.1",
     "fastify": "^0.32.0",
     "fastify-plugin": "^0.1.1",
+    "h2-auto-push": "file:../auto-push",
     "send": "^0.16.1"
   }
 }
