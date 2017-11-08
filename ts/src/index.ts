@@ -50,7 +50,6 @@ function staticServeFn(
       const cacheKey = cookies[CACHE_COOKIE_KEY];
       const newCacheKey =
           await ap.preprocessRequest(reqPath, reqStream, cacheKey);
-      cookies[CACHE_COOKIE_KEY] = newCacheKey;
       // TODO(jinwoo): Consider making this persistent across sessions.
       res.header('set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheKey));
 
@@ -64,15 +63,12 @@ function staticServeFn(
                   res.code(500).send(err);
                 }
               })
-          .on('headers',
-              () => {
-                ap.push(reqStream);
-              })
-          .on('end',
+          .on('file',
               () => {
                 ap.recordRequestPath(reqStream.session, reqPath, true);
               })
           .pipe(res.res as stream.Writable);
+      ap.push(reqStream);
     } else {
       send(req.req, reqPath, {root})
           .on('error',
