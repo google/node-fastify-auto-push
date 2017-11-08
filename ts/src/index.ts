@@ -43,7 +43,7 @@ function staticServeFn(
   if (prefix[0] !== '/') prefix = '/' + prefix;
   if (prefix[prefix.length - 1] !== '/') prefix += '/';
   app.get(prefix + '*', async (req: Request, res: Response) => {
-    const reqPath = req.params['*'] || '/';
+    const reqPath: string = prefix + (req.params['*'] || '');
     if (isHttp2Request(req.req)) {
       const reqStream = req.req.stream;
       const cookies = cookie.parse(req.req.headers['cookie'] as string || '');
@@ -63,12 +63,12 @@ function staticServeFn(
                   res.code(500).send(err);
                 }
               })
-          .on('file',
+          .on('end',
               () => {
                 ap.recordRequestPath(reqStream.session, reqPath, true);
               })
           .pipe(res.res as stream.Writable);
-      ap.push(reqStream);
+      await ap.push(reqStream);
     } else {
       send(req.req, reqPath, {root})
           .on('error',

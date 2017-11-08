@@ -23,12 +23,12 @@
   "devDependencies": {
     "@types/cookie": "^0.3.1",
     "@types/send": "^0.14.3",
-    "gts": "latest",
+    "gts": "^0.5.1",
     "typescript": "^2.6.1"
   },
   "dependencies": {
     "cookie": "^0.3.1",
-    "fastify": "^0.32.0",
+    "fastify": "^0.33.0",
     "fastify-plugin": "^0.1.1",
     "h2-auto-push": "file:../auto-push",
     "send": "^0.16.1"
