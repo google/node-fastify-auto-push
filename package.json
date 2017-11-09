@@ -22,7 +22,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/cookie": "^0.3.1",
-    "@types/send": "^0.14.3",
+    "@types/send": "^0.14.4",
     "gts": "^0.5.1",
     "typescript": "^2.6.1"
   },
