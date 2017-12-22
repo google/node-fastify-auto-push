@@ -1,8 +1,9 @@
 {
   "name": "fastify-auto-push",
   "version": "0.1.0",
-  "description": "Google's HTTP/2 auto-push middleware for fastify",
+  "description": "HTTP/2 auto-push middleware for fastify",
   "main": "build/src/index.js",
+  "types": "build/src/index",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "check": "gts check",
@@ -11,26 +12,28 @@
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "posttest": "npm run check",
+    "postinstall": "npm link h2-auto-push"
   },
   "keywords": [
     "http2",
     "auto-push",
-    "server-push"
+    "server-push",
+    "fastify"
   ],
   "author": "Google LLC",
   "license": "Apache-2.0",
+  "repository": "github:google/fastify-auto-push",
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "fastify": "^0.36.0",
+    "fastify-plugin": "^0.2.1",
+    "send": "^0.16.1"
+  },
   "devDependencies": {
     "@types/cookie": "^0.3.1",
     "@types/send": "^0.14.4",
-    "gts": "^0.5.1",
-    "typescript": "^2.6.1"
-  },
-  "dependencies": {
-    "cookie": "^0.3.1",
-    "fastify": "^0.33.0",
-    "fastify-plugin": "^0.1.1",
-    "h2-auto-push": "file:../auto-push",
-    "send": "^0.16.1"
+    "gts": "^0.5.2",
+    "typescript": "~2.6.2"
   }
 }

@@ -6,11 +6,7 @@
     "target": "es2017",
     "lib": [
       "es2017"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "h2-auto-push": ["../auto-push/build/src/index"]
-    }
+    ]
   },
   "include": [
     "ts/**/*.ts"

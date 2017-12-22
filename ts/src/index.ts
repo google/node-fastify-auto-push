@@ -1,30 +1,43 @@
+// Copyright 2017 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import * as cookie from 'cookie';
 import * as fastify from 'fastify';
 import * as autoPush from 'h2-auto-push';
 import * as http from 'http';
 import * as http2 from 'http2';
-import fp = require('fastify-plugin');
+import * as https from 'https';
 import * as send from 'send';
 import * as stream from 'stream';
 
+import fp = require('fastify-plugin');
+
 export {AssetCacheConfig} from 'h2-auto-push';
 
-export interface AutoPushOptions extends fastify.RegisterOptions {
+type HttpServer =
+    http.Server|https.Server|http2.Http2Server|http2.Http2SecureServer;
+export type RawRequest = http.IncomingMessage|http2.Http2ServerRequest;
+export type RawResponse = http.ServerResponse|http2.Http2ServerResponse;
+type Request = fastify.FastifyRequest<RawRequest>;
+type Response = fastify.FastifyReply<RawResponse>;
+
+export interface AutoPushOptions extends
+    fastify.RegisterOptions<RawRequest, RawResponse> {
   root: string;
   prefix?: string;
   cacheConfig?: autoPush.AssetCacheConfig;
 }
-
-type RawRequest = http.IncomingMessage|http2.Http2ServerRequest;
-type RawResponse = http.ServerResponse|http2.Http2ServerResponse;
-interface H2Request {
-  req: RawRequest;
-}
-interface H2Response {
-  res?: RawResponse;
-}
-type Request = fastify.FastifyRequest&H2Request;
-type Response = fastify.FastifyReply&H2Response;
 
 function isHttp2Request(req: RawRequest): req is http2.Http2ServerRequest {
   return !!(req as http2.Http2ServerRequest).stream;
@@ -33,8 +46,8 @@ function isHttp2Request(req: RawRequest): req is http2.Http2ServerRequest {
 const CACHE_COOKIE_KEY = '__ap_cache__';
 
 function staticServeFn(
-    app: fastify.FastifyInstance, opts: AutoPushOptions,
-    done?: (err?: Error) => void): void {
+    app: fastify.FastifyInstance<HttpServer, RawRequest, RawResponse>,
+    opts: AutoPushOptions, done?: (err?: Error) => void): void {
   const root = opts.root;
   let prefix = opts.prefix;
   const ap = new autoPush.AutoPush(root, opts.cacheConfig);
