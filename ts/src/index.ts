@@ -25,7 +25,7 @@ import fp = require('fastify-plugin');
 
 export {AssetCacheConfig} from 'h2-auto-push';
 
-type HttpServer =
+export type HttpServer =
     http.Server|https.Server|http2.Http2Server|http2.Http2SecureServer;
 export type RawRequest = http.IncomingMessage|http2.Http2ServerRequest;
 export type RawResponse = http.ServerResponse|http2.Http2ServerResponse;
@@ -33,7 +33,7 @@ type Request = fastify.FastifyRequest<RawRequest>;
 type Response = fastify.FastifyReply<RawResponse>;
 
 export interface AutoPushOptions extends
-    fastify.RegisterOptions<RawRequest, RawResponse> {
+    fastify.RegisterOptions<HttpServer, RawRequest, RawResponse> {
   root: string;
   prefix?: string;
   cacheConfig?: autoPush.AssetCacheConfig;

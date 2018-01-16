@@ -5,15 +5,16 @@
   "main": "build/src/index.js",
   "types": "build/src/index",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nyc ava",
+    "codecov": "nyc report --reporter=json && codecov -f coverage/*.json",
     "check": "gts check",
     "clean": "gts clean",
     "compile": "tsc -p .",
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run check",
-    "postinstall": "npm link h2-auto-push"
+    "posttest": "npm run check && npm run license-check",
+    "license-check": "jsgl --local ."
   },
   "keywords": [
     "http2",
@@ -23,17 +24,34 @@
   ],
   "author": "Google LLC",
   "license": "Apache-2.0",
-  "repository": "github:google/fastify-auto-push",
+  "repository": "github:google/node-fastify-auto-push",
+  "ava": {
+    "files": [
+      "build/test/*-test.js"
+    ]
+  },
+  "nyc": {
+    "exclude": [
+      "build/test"
+    ]
+  },
   "dependencies": {
     "cookie": "^0.3.1",
-    "fastify": "^0.36.0",
+    "fastify": "^0.39.1",
     "fastify-plugin": "^0.2.1",
+    "h2-auto-push": "^0.1.0",
     "send": "^0.16.1"
   },
   "devDependencies": {
     "@types/cookie": "^0.3.1",
+    "@types/get-port": "^3.2.0",
     "@types/send": "^0.14.4",
-    "gts": "^0.5.2",
+    "ava": "^0.24.0",
+    "codecov": "^3.0.0",
+    "get-port": "^3.2.0",
+    "gts": "^0.5.3",
+    "js-green-licenses": "^0.3.1",
+    "nyc": "^11.4.1",
     "typescript": "~2.6.2"
   }
 }
