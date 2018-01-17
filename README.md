@@ -32,9 +32,9 @@ For more details, see the `h2-auto-push` package.
 
 ```javascript
 import * as fastify from 'fastify';
-import {staticService} from 'fastify-auto-push';
+import {staticServe} from 'fastify-auto-push';
 ...
 const app = fastify({https: {key, cert}, http2: true});
-app.register(staticService, {root: 'path/to/static'});
+app.register(staticServe, {root: 'path/to/static'});
 ...
 ```
