@@ -22,6 +22,9 @@
     "posttest": "npm run check && npm run license-check",
     "license-check": "jsgl --local ."
   },
+  "engines": {
+    "node": ">=9.4.0 || >8.9.4 <9"
+  },
   "keywords": [
     "http2",
     "auto-push",
