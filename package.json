@@ -48,7 +48,7 @@
     "cookie": "^0.3.1",
     "fastify": "^0.39.1",
     "fastify-plugin": "^0.2.1",
-    "h2-auto-push": "^0.1.0",
+    "h2-auto-push": "^0.2.0",
     "send": "^0.16.1"
   },
   "devDependencies": {
