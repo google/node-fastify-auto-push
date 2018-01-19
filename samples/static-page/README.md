@@ -18,13 +18,3 @@ This application is a simple static file server built on top of `fastify` and
 * `--auto-push` or `--ap`
 
   Enable auto-push. Works only with `--http2`.
-
-## Copyright of the static contents
-
-CC BY-SA
-
-The files under the `static` directory are obtained from the [Wikipedia page
-on Node.js](https://en.wikipedia.org/wiki/Node.js).
-
-See https://en.wikipedia.org/wiki/Wikipedia:Copyrights for the Wikipedia's
-copyright details.

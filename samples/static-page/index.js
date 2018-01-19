@@ -49,7 +49,7 @@ if (args.autoPush && !args.http2) {
 
 const fsReadFile = promisify(fs.readFile);
 
-const STATIC_DIR = path.join(__dirname, 'static');
+const STATIC_DIR = path.join(__dirname, '..', '..', 'third_party', 'wikipedia');
 const CERTS_DIR = path.join(__dirname, 'certs');
 
 async function createServerOptions() {
