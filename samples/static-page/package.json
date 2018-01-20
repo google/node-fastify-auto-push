@@ -1,0 +1,23 @@
+{
+  "name": "sample-fastify-auto-push",
+  "version": "0.1.0",
+  "description": "Sample app for fastify HTTP/2 auto-push",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "http2",
+    "auto-push",
+    "server-push",
+    "fastify"
+  ],
+  "author": "Google LLC",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "argparse": "^1.0.9",
+    "fastify": "^0.39.1",
+    "fastify-auto-push": "^0.2.0",
+    "fastify-static": "^0.6.0"
+  }
+}
