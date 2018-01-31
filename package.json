@@ -1,6 +1,6 @@
 {
   "name": "fastify-auto-push",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "HTTP/2 auto-push middleware for fastify",
   "main": "build/src/index.js",
   "types": "build/src/index",
@@ -21,6 +21,9 @@
     "pretest": "npm run compile",
     "posttest": "npm run check && npm run license-check",
     "license-check": "jsgl --local ."
+  },
+  "engines": {
+    "node": ">=9.4.0 || >8.9.4 <9"
   },
   "keywords": [
     "http2",
@@ -45,7 +48,7 @@
     "cookie": "^0.3.1",
     "fastify": "^0.41.0",
     "fastify-plugin": "^0.2.1",
-    "h2-auto-push": "^0.1.0"
+    "h2-auto-push": "^0.2.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.3.1",

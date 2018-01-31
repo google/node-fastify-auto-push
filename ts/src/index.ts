@@ -74,22 +74,23 @@ async function staticServeFn(
       const newCacheKey =
           await ap.preprocessRequest(reqPath, reqStream, cacheKey);
       // TODO(jinwoo): Consider making this persistent across sessions.
-      res.setHeader('set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheKey));
+      res.setHeader(
+          'set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheKey));
     }
   });
 
   app.addHook('onResponse', async (res) => {
     if (isHttp2Response(res)) {
       const resStream = (res as http2.Http2ServerResponse).stream;
-      const statusCode = (res as http.ServerResponse).statusCode
+      const statusCode = (res as http.ServerResponse).statusCode;
+      console.log(statusCode, (resStream as StorePath).__req_path)
       if (statusCode === 404) {
-        ap.recordRequestPath(resStream.session,
-          (resStream as StorePath).__req_path || '',
-          false);
+        ap.recordRequestPath(
+            resStream.session, (resStream as StorePath).__req_path || '',
+            false);
       } else if (statusCode < 300 && statusCode >= 200) {
-        ap.recordRequestPath(resStream.session,
-          (resStream as StorePath).__req_path || '',
-          true);
+        ap.recordRequestPath(
+            resStream.session, (resStream as StorePath).__req_path || '', true);
       }
     }
   });

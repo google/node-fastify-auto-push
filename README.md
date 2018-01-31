@@ -28,6 +28,8 @@ supports automatic server-push.
 
 For more details, see the `h2-auto-push` package.
 
+**This package currently works only with Node >=9.4.0.**
+
 ## How to use
 
 ```javascript
