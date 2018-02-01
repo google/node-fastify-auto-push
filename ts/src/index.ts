@@ -68,7 +68,6 @@ async function staticServeFn(
       const url: string = req.url;
       let reqPath: string = url.split('?')[0];
       reqPath = reqPath.replace(prefix, '');
-      console.log('reqPath is', reqPath);
       (req.stream as StorePath).__req_path = reqPath;
       const cookies = cookie.parse(req.headers['cookie'] as string || '');
       const cacheKey = cookies[CACHE_COOKIE_KEY];
@@ -83,13 +82,10 @@ async function staticServeFn(
   });
 
   app.addHook('onSend', async (request, reply, payload) => {
-    console.log('onSend')
     const res = reply.res;
     if (isHttp2Response(res)) {
       const resStream = (res as http2.Http2ServerResponse).stream;
       const statusCode = (res as http2.Http2ServerResponse).statusCode;
-      console.log('onSend', statusCode, (resStream as StorePath).__req_path)
-      console.log('hasSession', !!resStream.session)
       if (statusCode === 404) {
         ap.recordRequestPath(
             resStream.session, (resStream as StorePath).__req_path || '',
