@@ -98,6 +98,6 @@ async function staticServeFn(
   });
 }
 
-function noop () {}
+function noop() {}
 
 export const staticServe = fp(staticServeFn);
