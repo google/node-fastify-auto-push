@@ -14,13 +14,13 @@
 
 import * as cookie from 'cookie';
 import * as fastify from 'fastify';
+import fp from 'fastify-plugin';
+import fastifyStatic from 'fastify-static';
 import * as autoPush from 'h2-auto-push';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
 import * as stream from 'stream';
-
-import fp = require('fastify-plugin');
 
 export {AssetCacheConfig} from 'h2-auto-push';
 
@@ -48,9 +48,9 @@ function isHttp2Response(res: RawResponse): res is http2.Http2ServerResponse {
 
 const CACHE_COOKIE_KEY = '__ap_cache__';
 
-// TODO use a Symbol if ts behaves
-interface StorePath extends http2.Http2Stream {
-  __req_path?: string;
+const REQ_PATH = Symbol('reqPath');
+interface StorePath extends http2.ServerHttp2Stream {
+  [REQ_PATH]: string;
 }
 
 async function staticServeFn(
@@ -60,7 +60,7 @@ async function staticServeFn(
   const prefix = opts.prefix || '';
   const ap = new autoPush.AutoPush(root, opts.cacheConfig);
 
-  app.register(require('fastify-static'), opts);
+  app.register(fastifyStatic, opts);
 
   app.addHook('onRequest', async (req, res) => {
     if (isHttp2Request(req)) {
@@ -68,16 +68,16 @@ async function staticServeFn(
       const url: string = req.url;
       let reqPath: string = url.split('?')[0];
       reqPath = reqPath.replace(prefix, '');
-      (req.stream as StorePath).__req_path = reqPath;
+      (reqStream as StorePath)[REQ_PATH] = reqPath;
       const cookies = cookie.parse(req.headers['cookie'] as string || '');
       const cacheKey = cookies[CACHE_COOKIE_KEY];
-      const newCacheKey =
+      const {newCacheCookie, pushFn} =
           await ap.preprocessRequest(reqPath, reqStream, cacheKey);
       // TODO(jinwoo): Consider making this persistent across sessions.
       res.setHeader(
-          'set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheKey));
+          'set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheCookie));
 
-      ap.push(reqStream).then(noop, noop);
+      pushFn(reqStream).then(noop, noop);
     }
   });
 
@@ -88,11 +88,10 @@ async function staticServeFn(
       const statusCode = (res as http2.Http2ServerResponse).statusCode;
       if (statusCode === 404) {
         ap.recordRequestPath(
-            resStream.session, (resStream as StorePath).__req_path || '',
-            false);
+            resStream.session, (resStream as StorePath)[REQ_PATH] || '', false);
       } else if (statusCode < 300 && statusCode >= 200) {
         ap.recordRequestPath(
-            resStream.session, (resStream as StorePath).__req_path || '', true);
+            resStream.session, (resStream as StorePath)[REQ_PATH] || '', true);
       }
     }
   });

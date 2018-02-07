@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import test from 'ava';
-import * as fastify from 'fastify';
-import * as getPort from 'get-port';
+import fastify from 'fastify';
+import getPort from 'get-port';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as path from 'path';
