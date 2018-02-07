@@ -1,10 +1,11 @@
 {
   "name": "fastify-auto-push",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "HTTP/2 auto-push middleware for fastify",
   "main": "build/src/index.js",
   "types": "build/src/index",
   "files": [
+    "AUTHORS",
     "CONTRIBUTING.md",
     "LICENSE",
     "README.md",
