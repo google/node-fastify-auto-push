@@ -16,8 +16,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "argparse": "^1.0.9",
-    "fastify": "^0.39.1",
-    "fastify-auto-push": "^0.2.0",
-    "fastify-static": "^0.6.0"
+    "fastify": "^0.43.0",
+    "fastify-auto-push": "file:../..",
+    "fastify-static": "^0.8.0"
   }
 }
