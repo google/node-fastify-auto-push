@@ -15,6 +15,7 @@
 import * as cookie from 'cookie';
 import * as fastify from 'fastify';
 import fp from 'fastify-plugin';
+import fastifyStatic from 'fastify-static';
 import * as autoPush from 'h2-auto-push';
 import * as http from 'http';
 import * as http2 from 'http2';
@@ -59,7 +60,7 @@ async function staticServeFn(
   const prefix = opts.prefix || '';
   const ap = new autoPush.AutoPush(root, opts.cacheConfig);
 
-  app.register(require('fastify-static'), opts);
+  app.register(fastifyStatic, opts);
 
   app.addHook('onRequest', async (req, res) => {
     if (isHttp2Request(req)) {

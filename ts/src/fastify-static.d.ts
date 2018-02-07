@@ -15,13 +15,9 @@
 declare module 'fastify-static' {
 import * as fastify from 'fastify';
 
-  interface PluginOptions {
-  }
-
   function fastifyStatic<HttpServer, HttpRequest, HttpResponse, T>(
-      fn: fastify.Plugin<HttpServer, HttpRequest, HttpResponse, T>,
-      options?: PluginOptions|
-      string): fastify.Plugin<HttpServer, HttpRequest, HttpResponse, T>;
+      instance: fastify.FastifyInstance<HttpServer, HttpRequest, HttpResponse>,
+      opts: T, callback?: (err?: Error) => void): void;
 
   export = fastifyStatic;
 }
