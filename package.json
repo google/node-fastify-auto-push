@@ -5,6 +5,7 @@
   "main": "build/src/index.js",
   "types": "build/src/index",
   "files": [
+    "AUTHORS",
     "CONTRIBUTING.md",
     "LICENSE",
     "README.md",
