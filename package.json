@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "cookie": "^0.3.1",
-    "fastify": "^0.43.0",
     "fastify-plugin": "^0.2.1",
     "fastify-static": "^0.7.0",
     "h2-auto-push": "^0.2.0"
@@ -58,6 +57,7 @@
     "@types/send": "^0.14.4",
     "ava": "^0.24.0",
     "codecov": "^3.0.0",
+    "fastify": "^0.43.0",
     "get-port": "^3.2.0",
     "gts": "^0.5.3",
     "js-green-licenses": "^0.3.1",
