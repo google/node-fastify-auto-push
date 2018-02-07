@@ -18,7 +18,6 @@ import * as autoPush from 'h2-auto-push';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
-import * as send from 'send';
 import * as stream from 'stream';
 
 import fp = require('fastify-plugin');
@@ -43,60 +42,62 @@ function isHttp2Request(req: RawRequest): req is http2.Http2ServerRequest {
   return !!(req as http2.Http2ServerRequest).stream;
 }
 
+function isHttp2Response(res: RawResponse): res is http2.Http2ServerResponse {
+  return !!(res as http2.Http2ServerResponse).stream;
+}
+
 const CACHE_COOKIE_KEY = '__ap_cache__';
 
-function staticServeFn(
+// TODO use a Symbol if ts behaves
+interface StorePath extends http2.Http2Stream {
+  __req_path?: string;
+}
+
+async function staticServeFn(
     app: fastify.FastifyInstance<HttpServer, RawRequest, RawResponse>,
-    opts: AutoPushOptions, done?: (err?: Error) => void): void {
+    opts: AutoPushOptions): Promise<void> {
   const root = opts.root;
-  let prefix = opts.prefix;
+  const prefix = opts.prefix || '';
   const ap = new autoPush.AutoPush(root, opts.cacheConfig);
 
-  if (prefix === undefined) prefix = '/';
-  if (prefix[0] !== '/') prefix = '/' + prefix;
-  if (prefix[prefix.length - 1] !== '/') prefix += '/';
-  app.get(prefix + '*', async (req: Request, res: Response) => {
-    const reqPath: string = prefix + (req.params['*'] || '');
-    if (isHttp2Request(req.req)) {
-      const reqStream = req.req.stream;
-      const cookies = cookie.parse(req.req.headers['cookie'] as string || '');
+  app.register(require('fastify-static'), opts);
+
+  app.addHook('onRequest', async (req, res) => {
+    if (isHttp2Request(req)) {
+      const reqStream = req.stream;
+      const url: string = req.url;
+      let reqPath: string = url.split('?')[0];
+      reqPath = reqPath.replace(prefix, '');
+      (req.stream as StorePath).__req_path = reqPath;
+      const cookies = cookie.parse(req.headers['cookie'] as string || '');
       const cacheKey = cookies[CACHE_COOKIE_KEY];
       const newCacheKey =
           await ap.preprocessRequest(reqPath, reqStream, cacheKey);
       // TODO(jinwoo): Consider making this persistent across sessions.
-      res.header('set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheKey));
+      res.setHeader(
+          'set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheKey));
 
-      send(req.req, reqPath, {root})
-          .on('error',
-              (err) => {
-                if (err.code === 'ENOENT') {
-                  ap.recordRequestPath(reqStream.session, reqPath, false);
-                  res.code(404).send();
-                } else {
-                  res.code(500).send(err);
-                }
-              })
-          .on('end',
-              () => {
-                ap.recordRequestPath(reqStream.session, reqPath, true);
-              })
-          .pipe(res.res as stream.Writable);
-      await ap.push(reqStream);
-    } else {
-      send(req.req, reqPath, {root})
-          .on('error',
-              (err) => {
-                if (err.code === 'ENOENT') {
-                  res.code(404).send();
-                } else {
-                  res.code(500).send(err);
-                }
-              })
-          .pipe(res.res as stream.Writable);
+      ap.push(reqStream).then(noop, noop);
     }
   });
 
-  if (done) done();
+  app.addHook('onSend', async (request, reply, payload) => {
+    const res = reply.res;
+    if (isHttp2Response(res)) {
+      const resStream = (res as http2.Http2ServerResponse).stream;
+      const statusCode = (res as http2.Http2ServerResponse).statusCode;
+      if (statusCode === 404) {
+        ap.recordRequestPath(
+            resStream.session, (resStream as StorePath).__req_path || '',
+            false);
+      } else if (statusCode < 300 && statusCode >= 200) {
+        ap.recordRequestPath(
+            resStream.session, (resStream as StorePath).__req_path || '', true);
+      }
+    }
+  });
 }
+
+function noop() {}
 
 export const staticServe = fp(staticServeFn);
