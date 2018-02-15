@@ -14,7 +14,8 @@
 
 const {ArgumentParser} = require('argparse');
 const fastify = require('fastify');
-const fastifyAutoPush = require('fastify-auto-push');
+// This should be `require('fastify-auto-push')` for stand-alone apps.
+const fastifyAutoPush = require('../..');
 const fastifyStatic = require('fastify-static');
 const fs = require('fs');
 const path = require('path');

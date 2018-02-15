@@ -57,7 +57,6 @@ async function staticServeFn(
     app: fastify.FastifyInstance<HttpServer, RawRequest, RawResponse>,
     opts: AutoPushOptions): Promise<void> {
   const root = opts.root;
-  const prefix = opts.prefix || '';
   const ap = new autoPush.AutoPush(root, opts.cacheConfig);
 
   app.register(fastifyStatic, opts);
@@ -65,9 +64,7 @@ async function staticServeFn(
   app.addHook('onRequest', async (req, res) => {
     if (isHttp2Request(req)) {
       const reqStream = req.stream;
-      const url: string = req.url;
-      let reqPath: string = url.split('?')[0];
-      reqPath = reqPath.replace(prefix, '');
+      const reqPath: string = req.url;
       (reqStream as StorePath)[REQ_PATH] = reqPath;
       const cookies = cookie.parse(req.headers['cookie'] as string || '');
       const cacheKey = cookies[CACHE_COOKIE_KEY];
@@ -75,7 +72,8 @@ async function staticServeFn(
           await ap.preprocessRequest(reqPath, reqStream, cacheKey);
       // TODO(jinwoo): Consider making this persistent across sessions.
       res.setHeader(
-          'set-cookie', cookie.serialize(CACHE_COOKIE_KEY, newCacheCookie));
+          'set-cookie',
+          cookie.serialize(CACHE_COOKIE_KEY, newCacheCookie, {path: '/'}));
 
       pushFn(reqStream).then(noop, noop);
     }

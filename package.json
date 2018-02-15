@@ -47,14 +47,14 @@
   },
   "dependencies": {
     "cookie": "^0.3.1",
-    "fastify-plugin": "^0.2.1",
+    "fastify-plugin": "^0.2.2",
     "fastify-static": "^0.8.0",
     "h2-auto-push": "^0.3.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.3.1",
     "@types/get-port": "^3.2.0",
-    "@types/node": "^9.4.0",
+    "@types/node": "^9.4.6",
     "@types/send": "^0.14.4",
     "ava": "^0.25.0",
     "codecov": "^3.0.0",
@@ -62,7 +62,7 @@
     "get-port": "^3.2.0",
     "gts": "^0.5.3",
     "js-green-licenses": "^0.4.0",
-    "nyc": "^11.4.1",
-    "typescript": "~2.7.1"
+    "nyc": "^11.5.0",
+    "typescript": "^2.7.2"
   }
 }
