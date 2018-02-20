@@ -64,7 +64,7 @@ async function staticServeFn(
   app.addHook('onRequest', async (req, res) => {
     if (isHttp2Request(req)) {
       const reqStream = req.stream;
-      const reqPath: string = req.url;
+      const reqPath = req.url;
       (reqStream as StorePath)[REQ_PATH] = reqPath;
       const cookies = cookie.parse(req.headers['cookie'] as string || '');
       const cacheKey = cookies[CACHE_COOKIE_KEY];
