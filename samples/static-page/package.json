@@ -15,9 +15,9 @@
   "author": "Google LLC",
   "license": "Apache-2.0",
   "dependencies": {
-    "argparse": "^1.0.9",
+    "argparse": "^1.0.10",
     "fastify": "^0.43.0",
-    "fastify-auto-push": "file:../..",
+    "fastify-auto-push": "^0.3.0",
     "fastify-static": "^0.8.0"
   }
 }
