@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "cookie": "^0.3.1",
-    "fastify-plugin": "^0.2.2",
+    "fastify-plugin": "^1.0.0",
     "fastify-static": "^0.10.0",
     "h2-auto-push": "^0.3.0"
   },
