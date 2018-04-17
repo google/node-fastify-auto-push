@@ -1,6 +1,6 @@
 {
   "name": "fastify-auto-push",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "HTTP/2 auto-push middleware for fastify",
   "main": "build/src/index.js",
   "types": "build/src/index",
@@ -48,7 +48,7 @@
   "dependencies": {
     "cookie": "^0.3.1",
     "fastify-plugin": "^1.0.0",
-    "fastify-static": "^0.10.0",
+    "fastify-static": "^0.10.1",
     "h2-auto-push": "^0.3.1"
   },
   "devDependencies": {
