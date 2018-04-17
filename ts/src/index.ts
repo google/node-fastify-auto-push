@@ -48,24 +48,19 @@ function isHttp2Response(res: RawResponse): res is http2.Http2ServerResponse {
 
 const CACHE_COOKIE_KEY = '__ap_cache__';
 
-const REQ_PATH = Symbol('reqPath');
-interface StorePath extends http2.ServerHttp2Stream {
-  [REQ_PATH]: string;
-}
-
 async function staticServeFn(
     app: fastify.FastifyInstance<HttpServer, RawRequest, RawResponse>,
     opts: AutoPushOptions): Promise<void> {
   const root = opts.root;
+  const prefix = opts.prefix || '/';
   const ap = new autoPush.AutoPush(root, opts.cacheConfig);
 
   app.register(fastifyStatic, opts);
 
   app.addHook('onRequest', async (req, res) => {
     if (isHttp2Request(req)) {
-      const reqStream = req.stream;
       const reqPath = req.url;
-      (reqStream as StorePath)[REQ_PATH] = reqPath;
+      const reqStream = req.stream;
       const cookies = cookie.parse(req.headers['cookie'] as string || '');
       const cacheKey = cookies[CACHE_COOKIE_KEY];
       const {newCacheCookie, pushFn} =
@@ -82,14 +77,16 @@ async function staticServeFn(
   app.addHook('onSend', async (request, reply, payload) => {
     const res = reply.res;
     if (isHttp2Response(res)) {
-      const resStream = (res as http2.Http2ServerResponse).stream;
-      const statusCode = (res as http2.Http2ServerResponse).statusCode;
-      if (statusCode === 404) {
-        ap.recordRequestPath(
-            resStream.session, (resStream as StorePath)[REQ_PATH] || '', false);
-      } else if (statusCode < 300 && statusCode >= 200) {
-        ap.recordRequestPath(
-            resStream.session, (resStream as StorePath)[REQ_PATH] || '', true);
+      const statusCode = res.statusCode;
+      const resStream = res.stream;
+      const reqPath = request.req.url;
+      if (statusCode === 404 && reqPath) {
+        ap.recordRequestPath(resStream.session, reqPath, false);
+      } else if (
+          statusCode < 300 && statusCode >= 200 && reqPath &&
+          // Record as a static file only when the path starts with `prefix`.
+          reqPath.startsWith(prefix)) {
+        ap.recordRequestPath(resStream.session, reqPath, true);
       }
     }
   });
