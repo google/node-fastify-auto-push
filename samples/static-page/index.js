@@ -57,7 +57,7 @@ async function createServerOptions() {
     return fsReadFile(path.join(CERTS_DIR, filename));
   };
   const [key, cert] = await Promise.all(
-      [readCertFile('server.key'), readCertFile('server.crt')]);
+      [readCertFile('key.pem'), readCertFile('cert.pem')]);
   return {key, cert};
 }
 
