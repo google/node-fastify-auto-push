@@ -17,7 +17,7 @@
   "dependencies": {
     "argparse": "^1.0.10",
     "fastify": "^1.0.0",
-    "fastify-auto-push": "^0.3.1",
+    "fastify-auto-push": "^0.3.2",
     "fastify-static": "^0.10.0"
   }
 }
