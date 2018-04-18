@@ -20,13 +20,15 @@ import * as autoPush from 'h2-auto-push';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
+import * as pino from 'pino';
 import * as stream from 'stream';
 
 export {AssetCacheConfig} from 'h2-auto-push';
 
 export type HttpServer =
     http.Server|https.Server|http2.Http2Server|http2.Http2SecureServer;
-export type RawRequest = http.IncomingMessage|http2.Http2ServerRequest;
+export type RawRequest =
+    (http.IncomingMessage|http2.Http2ServerRequest)&{log?: pino.Logger};
 export type RawResponse = http.ServerResponse|http2.Http2ServerResponse;
 type Request = fastify.FastifyRequest<RawRequest>;
 type Response = fastify.FastifyReply<RawResponse>;
@@ -70,7 +72,10 @@ async function staticServeFn(
           'set-cookie',
           cookie.serialize(CACHE_COOKIE_KEY, newCacheCookie, {path: '/'}));
 
-      pushFn(reqStream).then(noop, noop);
+      reqStream.on('pushError', (err) => {
+        req.log!.error('Error while pushing', err);
+      });
+      pushFn().then(noop, noop);
     }
   });
 
