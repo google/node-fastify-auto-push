@@ -70,7 +70,10 @@ async function staticServeFn(
           'set-cookie',
           cookie.serialize(CACHE_COOKIE_KEY, newCacheCookie, {path: '/'}));
 
-      pushFn(reqStream).then(noop, noop);
+      reqStream.on('pushError', (err) => {
+        app.log.error('Error while pushing', err);
+      });
+      pushFn().then(noop, noop);
     }
   });
 
