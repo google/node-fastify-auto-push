@@ -33,8 +33,9 @@ export type RawResponse = http.ServerResponse|http2.Http2ServerResponse;
 type Request = fastify.FastifyRequest<RawRequest>;
 type Response = fastify.FastifyReply<RawResponse>;
 
-export interface AutoPushOptions extends
-    fastify.RegisterOptions<HttpServer, RawRequest, RawResponse> {
+export interface AutoPushOptions<Server extends HttpServer, Request extends
+                                     RawRequest, Response extends RawResponse>
+    extends fastify.RegisterOptions<Server, Request, Response> {
   root: string;
   prefix?: string;
   cacheConfig?: autoPush.AssetCacheConfig;
@@ -50,9 +51,11 @@ function isHttp2Response(res: RawResponse): res is http2.Http2ServerResponse {
 
 const CACHE_COOKIE_KEY = '__ap_cache__';
 
-async function staticServeFn(
-    app: fastify.FastifyInstance<HttpServer, RawRequest, RawResponse>,
-    opts: AutoPushOptions): Promise<void> {
+export async function
+staticServeFn<Server extends HttpServer, Request extends
+                  RawRequest, Response extends RawResponse>(
+    app: fastify.FastifyInstance<Server, Request, Response>,
+    opts: AutoPushOptions<Server, Request, Response>): Promise<void> {
   const root = opts.root;
   const prefix = opts.prefix || '/';
   const ap = new autoPush.AutoPush(root, opts.cacheConfig);
@@ -99,4 +102,9 @@ async function staticServeFn(
 
 function noop() {}
 
-export const staticServe = fp(staticServeFn);
+// This type is probably not useful. Users probably want to call fp to
+// instantiate the plugin specifically for their specific Http server, request
+// and response types rather than using the union types like we do here.
+export const staticServe =
+    fp<HttpServer, RawRequest, RawResponse,
+       AutoPushOptions<HttpServer, RawRequest, RawResponse>>(staticServeFn);
