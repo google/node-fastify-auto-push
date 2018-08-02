@@ -14,18 +14,21 @@
 
 import test from 'ava';
 import fastify from 'fastify';
+import fp from 'fastify-plugin';
 import getPort from 'get-port';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as path from 'path';
 
-import {AutoPushOptions, HttpServer, RawRequest, RawResponse, staticServe} from '../src/index';
+import {AutoPush} from '../../node_modules/h2-auto-push/build/src';
+import {AutoPushOptions, HttpServer, RawRequest, RawResponse, staticServe, staticServeFn} from '../src/index';
 
-function setUpServer(
-    app: fastify.FastifyInstance<HttpServer, RawRequest, RawResponse>,
-    port: number) {
-  app.register<AutoPushOptions>(
-      staticServe,
+function setUpServer<Server extends HttpServer, Request extends
+                         RawRequest, Response extends RawResponse>(
+    app: fastify.FastifyInstance<Server, Request, Response>, port: number) {
+  app.register(
+      fp<Server, Request, Response, AutoPushOptions<Server, Request, Response>>(
+          staticServeFn),
       {root: path.join(__dirname, '..', '..', 'ts', 'test', 'static')});
   app.listen(port, (err) => {
     if (err) throw err;
