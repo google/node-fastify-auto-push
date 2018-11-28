@@ -21,7 +21,7 @@ This project is for automating server push and getting rid of the need for
 manual configurations from service developers. It is a
 [fastify](https://www.fastify.io/) plugin that serves static files and is
 implemented on top of the
-[`h2-auto-push`](https://github.com/google/h2-auto-push) package. It can be
+[`h2-auto-push`](https://github.com/google/node-h2-auto-push) package. It can be
 thought as a replacement of the
 [`fastify-static`](https://github.com/fastify/fastify-static) plugin that
 supports automatic server-push.
