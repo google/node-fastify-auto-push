@@ -23,16 +23,14 @@ import * as path from 'path';
 import {AutoPush} from '../../node_modules/h2-auto-push/build/src';
 import {AutoPushOptions, HttpServer, RawRequest, RawResponse, staticServe, staticServeFn} from '../src/index';
 
-function setUpServer<Server extends HttpServer, Request extends
-                         RawRequest, Response extends RawResponse>(
+async function setUpServer<Server extends HttpServer, Request extends
+                               RawRequest, Response extends RawResponse>(
     app: fastify.FastifyInstance<Server, Request, Response>, port: number) {
   app.register(
       fp<Server, Request, Response, AutoPushOptions<Server, Request, Response>>(
           staticServeFn),
       {root: path.join(__dirname, '..', '..', 'ts', 'test', 'static')});
-  app.listen(port, (err) => {
-    if (err) throw err;
-  });
+  await app.listen(port);
   return app;
 }
 
@@ -74,7 +72,7 @@ test('http2 static file serving', async (t) => {
   const port = await getPort();
 
   const app = fastify({http2: true});
-  setUpServer(app, port);
+  await setUpServer(app, port);
 
   const data = await http2FetchFile(port, '/test.html');
   t.true(data.includes('This is a test document.'));
@@ -85,7 +83,7 @@ test('http1 static file serving', async (t) => {
   const port = await getPort();
 
   const app = fastify({http2: false});
-  setUpServer(app, port);
+  await setUpServer(app, port);
 
   const data = await http1FetchFile(port, '/test.html');
   t.true(data.includes('This is a test document.'));

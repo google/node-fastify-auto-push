@@ -20,15 +20,12 @@ import * as autoPush from 'h2-auto-push';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
-import * as pino from 'pino';
-import * as stream from 'stream';
 
 export {AssetCacheConfig} from 'h2-auto-push';
 
 export type HttpServer =
     http.Server|https.Server|http2.Http2Server|http2.Http2SecureServer;
-export type RawRequest =
-    (http.IncomingMessage|http2.Http2ServerRequest)&{log?: pino.Logger};
+export type RawRequest = (http.IncomingMessage|http2.Http2ServerRequest);
 export type RawResponse = http.ServerResponse|http2.Http2ServerResponse;
 type Request = fastify.FastifyRequest<RawRequest>;
 type Response = fastify.FastifyReply<RawResponse>;
@@ -63,15 +60,19 @@ staticServeFn<Server extends HttpServer, Request extends
   app.register(fastifyStatic, opts);
 
   app.addHook('onRequest', async (req, res) => {
-    if (isHttp2Request(req)) {
-      const reqPath = req.url;
-      const reqStream = req.stream;
-      const cookies = cookie.parse(req.headers['cookie'] as string || '');
+    // Used for compatibility with fastify 1.x and 2.0
+    const rawRequest = req.raw || req;
+    const rawResponse = res.res || res;
+    if (isHttp2Request(rawRequest)) {
+      const reqPath = rawRequest.url;
+      const reqStream = rawRequest.stream;
+      const cookies =
+          cookie.parse(rawRequest.headers['cookie'] as string || '');
       const cacheKey = cookies[CACHE_COOKIE_KEY];
       const {newCacheCookie, pushFn} =
           await ap.preprocessRequest(reqPath, reqStream, cacheKey);
       // TODO(jinwoo): Consider making this persistent across sessions.
-      res.setHeader(
+      rawResponse.setHeader(
           'set-cookie',
           cookie.serialize(CACHE_COOKIE_KEY, newCacheCookie, {path: '/'}));
 

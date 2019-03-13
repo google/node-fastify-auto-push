@@ -47,22 +47,22 @@
   },
   "dependencies": {
     "cookie": "^0.3.1",
-    "fastify-plugin": "^1.0.1",
-    "fastify-static": "^0.12.0",
+    "fastify-plugin": "^1.5.0",
+    "fastify-static": "^2.3.4",
     "h2-auto-push": "^0.4.0"
   },
   "devDependencies": {
-    "@types/cookie": "^0.3.1",
-    "@types/get-port": "^4.0.0",
-    "@types/node": "^10.0.1",
+    "@types/cookie": "^0.3.2",
+    "@types/get-port": "^4.0.1",
+    "@types/node": "^10.12.30",
     "@types/send": "^0.14.4",
-    "ava": "^0.25.0",
-    "codecov": "^3.0.1",
-    "fastify": "^1.3.1",
-    "get-port": "^4.0.0",
+    "ava": "^1.3.1",
+    "codecov": "^3.2.0",
+    "fastify": "^2.0.1",
+    "get-port": "^4.2.0",
     "gts": "^0.9.0",
     "js-green-licenses": "^0.5.0",
-    "nyc": "^12.0.1",
+    "nyc": "^13.3.0",
     "typescript": "~3.3.0"
   }
 }
