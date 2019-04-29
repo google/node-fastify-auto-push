@@ -20,58 +20,70 @@ import * as http from 'http';
 import * as http2 from 'http2';
 import * as path from 'path';
 
-import {AutoPush} from '../../node_modules/h2-auto-push/build/src';
-import {AutoPushOptions, HttpServer, RawRequest, RawResponse, staticServe, staticServeFn} from '../src/index';
+import { AutoPush } from '../../node_modules/h2-auto-push/build/src';
+import {
+  AutoPushOptions,
+  HttpServer,
+  RawRequest,
+  RawResponse,
+  staticServe,
+  staticServeFn,
+} from '../src/index';
 
-async function setUpServer<Server extends HttpServer, Request extends
-                               RawRequest, Response extends RawResponse>(
-    app: fastify.FastifyInstance<Server, Request, Response>, port: number) {
+async function setUpServer<
+  Server extends HttpServer,
+  Request extends RawRequest,
+  Response extends RawResponse
+>(app: fastify.FastifyInstance<Server, Request, Response>, port: number) {
   app.register(
-      fp<Server, Request, Response, AutoPushOptions<Server, Request, Response>>(
-          staticServeFn),
-      {root: path.join(__dirname, '..', '..', 'ts', 'test', 'static')});
+    fp<Server, Request, Response, AutoPushOptions<Server, Request, Response>>(
+      staticServeFn
+    ),
+    { root: path.join(__dirname, '..', '..', 'ts', 'test', 'static') }
+  );
   await app.listen(port);
   return app;
 }
 
 function http2FetchFile(port: number, path: string): Promise<string> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const session = http2.connect(`http://localhost:${port}`);
-    const stream = session.request({':path': path});
+    const stream = session.request({ ':path': path });
     stream.setEncoding('utf8');
     stream.on('response', () => {
       let data = '';
       stream
-          .on('data',
-              (chunk) => {
-                data += chunk;
-              })
-          .on('end', () => {
-            resolve(data);
-          });
+        .on('data', chunk => {
+          data += chunk;
+        })
+        .on('end', () => {
+          resolve(data);
+        });
     });
   });
 }
 
 function http1FetchFile(port: number, path: string): Promise<string> {
-  return new Promise((resolve) => {
-    const req = http.request({port, path}, (res) => {
+  return new Promise(resolve => {
+    const req = http.request({ port, path }, res => {
       res.setEncoding('utf8');
       let data = '';
-      res.on('data', (chunk) => {
-           data += chunk;
-         }).on('end', () => {
-        resolve(data);
-      });
+      res
+        .on('data', chunk => {
+          data += chunk;
+        })
+        .on('end', () => {
+          resolve(data);
+        });
     });
     req.end();
   });
 }
 
-test('http2 static file serving', async (t) => {
+test('http2 static file serving', async t => {
   const port = await getPort();
 
-  const app = fastify({http2: true});
+  const app = fastify({ http2: true });
   await setUpServer(app, port);
 
   const data = await http2FetchFile(port, '/test.html');
@@ -79,10 +91,10 @@ test('http2 static file serving', async (t) => {
   app.close(() => {});
 });
 
-test('http1 static file serving', async (t) => {
+test('http1 static file serving', async t => {
   const port = await getPort();
 
-  const app = fastify({http2: false});
+  const app = fastify({ http2: false });
   await setUpServer(app, port);
 
   const data = await http1FetchFile(port, '/test.html');
