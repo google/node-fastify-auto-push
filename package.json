@@ -46,13 +46,13 @@
     ]
   },
   "dependencies": {
-    "cookie": "^0.3.1",
+    "cookie": "^0.4.0",
     "fastify-plugin": "^1.5.0",
     "fastify-static": "^2.3.4",
     "h2-auto-push": "^0.4.1"
   },
   "devDependencies": {
-    "@types/cookie": "^0.3.2",
+    "@types/cookie": "^0.4.0",
     "@types/get-port": "^4.0.1",
     "@types/node": "^10.12.30",
     "@types/send": "^0.14.4",
