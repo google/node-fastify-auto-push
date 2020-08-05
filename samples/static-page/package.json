@@ -16,7 +16,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "argparse": "^1.0.10",
-    "fastify": "^2.0.0",
+    "fastify": "^2.15.1",
     "fastify-auto-push": "^0.4.0",
     "fastify-static": "^2.0.0"
   }
