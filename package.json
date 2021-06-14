@@ -55,7 +55,7 @@
     "@types/cookie": "^0.3.2",
     "@types/get-port": "^4.0.1",
     "@types/node": "^10.12.30",
-    "@types/send": "^0.14.4",
+    "@types/send": "^0.17.0",
     "ava": "^2.0.0",
     "codecov": "^3.2.0",
     "fastify": "^2.0.1",
