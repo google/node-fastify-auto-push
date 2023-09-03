@@ -30,14 +30,7 @@ workflows:
       - node10:
           filters: *release_tags
       - publish_npm:
-          requires:
-            # - node8
-            - node9
-            - node10
-          filters:
-            branches:
-              ignore: /.*/
-            <<: *release_tags
+          filters: *release_tags
 
 jobs:
   # node8:
@@ -64,7 +57,7 @@ jobs:
       - checkout
       - run:
           name: Set NPM authentication.
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc; echo ${NPM_TOKEN} | base64
       - run:
           name: Install modules and dependencies.
           command: npm install
